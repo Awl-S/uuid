@@ -7,6 +7,8 @@ name: CMake on multiple platforms
 on:
   push:
     branches: [ "master" ]
+    tags:
+      - 'v*'  # Trigger on tags like v1.0.0
   pull_request:
     branches: [ "master" ]
 
@@ -48,9 +50,6 @@ jobs:
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
       - name: Configure CMake
-        # Configure CMake in a 'build' subdirectory. The build directory will be used to hold
-        # the generated build files and the final output binary. Here, we pass the build type
-        # and the chosen compilers for each job in the matrix.
         run: |
           mkdir -p ${{ github.workspace }}/build
           cd ${{ github.workspace }}/build
@@ -62,16 +61,26 @@ jobs:
           cmake --build . --config ${{ matrix.build_type }}
 
       - name: Run tests
-        # If you have tests in your project, you can run them after building.
-        # This assumes that CTest is available and tests are defined in your CMakeLists.txt
         run: |
           cd ${{ github.workspace }}/build
-          ctest --output-on-failure
+          # Run your tests here if you have them
+          # Example:
+          # ./test_program
 
-      - name: Upload build artifacts
-        if: success()
-        # Upload the build artifacts to GitHub Actions so you can download them later.
-        uses: actions/upload-artifact@v3
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') # Only run on tags like v1.0.0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up GitHub CLI
+        uses: cli/cli-action@v2
         with:
-          name: build-artifacts
-          path: ${{ github.workspace }}/build
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"  # Get the tag version
+          gh release create "$VERSION" --notes "Release version $VERSION" --target $GITHUB_SHA
