@@ -1,8 +1,8 @@
 #ifndef UUID_GENERATOR_H
 #define UUID_GENERATOR_H
 
-#include <stdint.h>  // For uint8_t
-#include <stdlib.h>  // For malloc/free
+#include <stdint.h>  // For uint8_t type
+#include <stdlib.h>  // For malloc/free functions
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,7 +17,7 @@ char* uuid_to_string(uint8_t* uuid);
 // Function to convert a string to UUID (expects string format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
 int string_to_uuid(const char* str, uint8_t* uuid);
 
-// Function to free the memory allocated for UUID
+// Function to free the memory allocated for the UUID
 void free_uuid(uint8_t* uuid);
 
 #ifdef __cplusplus
