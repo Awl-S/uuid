@@ -1,7 +1,10 @@
 #include "uuid.h"
 #include <stdio.h>
 #include <string.h>
-#include <rpc.h>  // For Windows UUID generation
+
+#ifdef _WIN32
+	#include <rpc.h>  // For Windows UUID generation
+#endif
 
 // Function to generate a UUID and return it as a byte array
 uint8_t* generate_uuid() {
