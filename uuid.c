@@ -2,8 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>  // For malloc/free
+
+#ifdef _WIN32
+// Windows-specific UUID generation using rpc.h
 #include <rpc.h>  // For Windows UUID generation
-#include <uuid/uuid.h>  // For POSIX UUID generation (Linux, macOS)
+#else
+// POSIX (Linux/macOS) UUID generation using uuid/uuid.h
+    #include <uuid/uuid.h>  // For POSIX UUID generation
+#endif
 
 // Function to generate a UUID and return it as a byte array
 uint8_t* generate_uuid() {
