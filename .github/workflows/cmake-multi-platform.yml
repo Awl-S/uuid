@@ -76,11 +76,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up GitHub CLI
-        uses: cli/cli-action@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install gh
 
       - name: Create Release
         run: |
           VERSION="${GITHUB_REF#refs/tags/}"  # Get the tag version
           gh release create "$VERSION" --notes "Release version $VERSION" --target $GITHUB_SHA
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
